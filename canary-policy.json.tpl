@@ -28,7 +28,7 @@
                 "logs:CreateLogGroup"
             ],
             "Resource": [
-                "arn:aws:logs:${region}:${account}:log-group:/aws/lambda/cwsyn-*"
+                "arn:aws:logs:::log-group:/aws/lambda/cwsyn-*"
             ]
         },
         {

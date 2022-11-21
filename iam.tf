@@ -1,12 +1,7 @@
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
-
 data "template_file" "canarypolicy" {
   template = file("${path.module}/canary-policy.json.tpl")
   vars = {
-    bucket  = var.s3_artifact_bucket
-    region  = data.aws_region.current.name
-    account = data.aws_caller_identity.current.account_id
+    bucket = var.s3_artifact_bucket
   }
 }
 
