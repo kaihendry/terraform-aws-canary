@@ -9,7 +9,7 @@ const pageLoadBlueprint = async function () {
     const response = await page.goto(URL, {waitUntil: 'domcontentloaded', timeout: 30000});
     //Wait for page to render.
     //Increase or decrease wait time based on endpoint being monitored.
-    await page.waitFor(15000);
+    await page.waitForTimeout(15000);
     await synthetics.takeScreenshot('loaded', 'loaded');
     let pageTitle = await page.title();
     log.info('Page title: ' + pageTitle);
