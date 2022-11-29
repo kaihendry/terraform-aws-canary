@@ -4,6 +4,8 @@
 
 Check service is up, check connectivity between canary and endpoint.
 
+A helpful application of https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/synthetics_canary
+
 # Usage example
 
     module "canaries" {
