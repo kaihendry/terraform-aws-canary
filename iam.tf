@@ -1,19 +1,81 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-data "template_file" "canarypolicy" {
-  template = file("${path.module}/canary-policy.json.tpl")
-  vars = {
-    bucket  = var.s3_artifact_bucket
-    region  = data.aws_region.current.name
-    account = data.aws_caller_identity.current.account_id
-  }
-}
-
 resource "aws_iam_policy" "canary_policy" {
   name        = "canary-policy"
   description = "Policy for canary"
-  policy      = data.template_file.canarypolicy.rendered
+  policy      = data.aws_iam_policy_document.canary_permissions.json
+}
+
+data "aws_iam_policy_document" "canary_permissions" {
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject"
+    ]
+    resources = [
+      "arn:aws:s3:::${var.s3_artifact_bucket}/*"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetBucketLocation"
+    ]
+    resources = [
+      "arn:aws:s3:::${var.s3_artifact_bucket}"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup"
+    ]
+    resources = [
+      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/cwsyn-*"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:ListAllMyBuckets",
+      "xray:PutTraceSegments"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    resources = [
+      "*"
+    ]
+    actions = [
+      "cloudwatch:PutMetricData"
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "cloudwatch:namespace"
+      values = [
+        "CloudWatchSynthetics"
+      ]
+    }
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface"
+    ]
+    resources = [
+      "*"
+    ]
+  }
 }
 
 resource "aws_iam_role" "canary_role" {
