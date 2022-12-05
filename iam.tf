@@ -4,8 +4,8 @@ resource "aws_iam_policy" "canary_policy" {
   policy      = data.aws_iam_policy_document.canary_permissions.json
 }
 
+#tfsec:ignore:aws-iam-no-policy-wildcards
 data "aws_iam_policy_document" "canary_permissions" {
-
   statement {
     effect = "Allow"
     actions = [
