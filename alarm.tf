@@ -22,9 +22,9 @@ resource "aws_cloudwatch_metric_alarm" "canary_alarm" {
   ]
 }
 
-# create SNS topic for canary alarm
+# #tfsec:ignore:aws-sns-enable-topic-encryption
 resource "aws_sns_topic" "canary_alarm" {
-  name              = "canary-alarm"
+  name = "canary-alarm"
 }
 
 resource "aws_sns_topic_subscription" "canary_alarm" {
